@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173b3f">
+  <meta name="description" content="中国旅行博主在柬埔寨使用的旅行与采访英语工具">
+  <title>柬埔寨旅行采访英语</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__eyebrow">CAMBODIA FIELD NOTES</div>
+    <h1>柬埔寨旅行采访英语</h1>
+    <p>按天、按场景快速找到能直接开口的英语。当前为内容样板版。</p>
+    <div class="hero__meta">
+      <span>7天行程</span><span>旅行办事</span><span>街头采访</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="toolbar" aria-label="查找工具">
+      <label class="search">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="搜索：房租、拍摄、说慢一点…" autocomplete="off">
+      </label>
+      <button id="favoriteToggle" class="soft-button" type="button" aria-pressed="false">☆ 只看收藏</button>
+    </section>
+
+    <nav class="tabs" aria-label="内容分类">
+      <button class="tab is-active" type="button" data-view="day1">第一天</button>
+      <button class="tab" type="button" data-view="toolkit">采访工具箱</button>
+      <button class="tab" type="button" data-view="all">全部</button>
+    </nav>
+
+    <section class="day-strip" aria-label="七天行程进度">
+      <div class="day-chip is-ready"><b>D1</b><span>金边</span></div>
+      <div class="day-chip"><b>D2</b><span>金边</span></div>
+      <div class="day-chip"><b>D3</b><span>西港</span></div>
+      <div class="day-chip"><b>D4</b><span>西港</span></div>
+      <div class="day-chip"><b>D5</b><span>暹粒</span></div>
+      <div class="day-chip"><b>D6</b><span>浮村</span></div>
+      <div class="day-chip"><b>D7</b><span>返程</span></div>
+    </section>
+
+    <section class="intro-card">
+      <div>
+        <span class="kicker">使用方法</span>
+        <h2 id="viewTitle">第一天 · 金边</h2>
+      </div>
+      <p id="viewDescription">抵达、入住、参观吐斯廉屠杀博物馆，并在夜市采访当地人的生活成本。</p>
+    </section>
+
+    <section id="content" class="content" aria-live="polite"></section>
+    <p id="emptyState" class="empty" hidden>没有找到匹配内容，换一个关键词试试。</p>
+  </main>
+
+  <template id="sectionTemplate">
+    <article class="scene">
+      <button class="scene__header" type="button" aria-expanded="true">
+        <span>
+          <span class="scene__tag"></span>
+          <span class="scene__title"></span>
+          <span class="scene__subtitle"></span>
+        </span>
+        <span class="scene__chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div class="scene__body">
+        <div class="phrase-list"></div>
+      </div>
+    </article>
+  </template>
+
+  <template id="phraseTemplate">
+    <article class="phrase-card">
+      <div class="phrase-card__topline">
+        <span class="phrase-card__kind"></span>
+        <button class="favorite-button" type="button" aria-label="收藏这句话">☆</button>
+      </div>
+      <p class="english"></p>
+      <p class="chinese"></p>
+      <p class="note" hidden></p>
+      <div class="phrase-card__actions">
+        <button class="speak-button" type="button">▶ 朗读</button>
+        <button class="copy-button" type="button">复制</button>
+      </div>
+    </article>
+  </template>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
