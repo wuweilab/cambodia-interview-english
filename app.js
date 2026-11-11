@@ -200,6 +200,8 @@ const sections = [
   }
 ];
 
+sections.push(...(window.additionalSections || []));
+
 const sectionExtras = {
   airport: {
     terms: [
@@ -394,10 +396,24 @@ const sectionExtras = {
   }
 };
 
-sections.forEach(section => Object.assign(section, sectionExtras[section.id] || {}));
+const baseCategories = {
+  airport: "transport",
+  hotel: "hotel",
+  "museum-visit": "attraction",
+  "museum-interview": "interview",
+  tuktuk: "transport",
+  "night-market": "food"
+};
+
+sections.forEach(section => {
+  Object.assign(section, sectionExtras[section.id] || {});
+  section.category ||= baseCategories[section.id] || (section.view === "toolkit" ? "interview" : "interview");
+});
 
 const state = {
-  view: "day1",
+  mode: "day",
+  day: "day1",
+  category: "all",
   query: "",
   favoritesOnly: false,
   favorites: new Set(JSON.parse(localStorage.getItem("cambodiaEnglishFavorites") || "[]"))
@@ -410,13 +426,40 @@ const phraseTemplate = document.querySelector("#phraseTemplate");
 const searchInput = document.querySelector("#searchInput");
 const favoriteToggle = document.querySelector("#favoriteToggle");
 const toast = document.querySelector("#toast");
+const dayFilter = document.querySelector("#dayFilter");
+const sceneFilter = document.querySelector("#sceneFilter");
+
+const dayCopy = {
+  day1: ["第一天 · 抵达金边", "机场、酒店、吐斯廉博物馆、城市交通与夜市生活成本采访。"],
+  day2: ["第二天 · 深入金边", "王宫与博物馆、PSE、中央市场、老城与钻石岛。"],
+  day3: ["第三天 · 前往西港", "Giant Ibis大巴、酒店包车、赌场建筑与海滩商户采访。"],
+  day4: ["第四天 · 西港深访", "本地市场、城市建设、Wat Leu与敏感区域的安全采访。"],
+  day5: ["第五天 · 暹粒与吴哥", "国内航班、吴哥交通、古迹讲解与旅游业生计采访。"],
+  day6: ["第六天 · 浮村与洞里萨湖", "本地市场、旅行团、浮村生活、红树林与湖泊生态。"],
+  day7: ["第七天 · 转机返程", "行李直挂、机场转机、延误应对与旅程收尾采访。"]
+};
+
+const categoryCopy = {
+  all: ["全部场景", "跨越七天查看所有旅行办事与采访内容。"],
+  transport: ["交通场景", "机场、大巴、包车、突突车、航班与转机。"],
+  hotel: ["酒店场景", "入住、寄存行李、前台协助和安排车辆。"],
+  attraction: ["景点场景", "购票、着装、开放时间、导游与古迹保护。"],
+  food: ["餐饮与市场", "点餐、购物、砍价和生活成本采访。"],
+  interview: ["采访场景", "历史、城市变化、旅游业、生计与环境的深度交流。"],
+  safety: ["安全与应急", "敏感区域、航班异常、行李丢失和安全退出。"]
+};
 
 function phraseId(sectionId, phrase) {
   return `${sectionId}::${phrase[1]}`;
 }
 
 function includesQuery(section, phrase) {
-  const haystack = [section.title, section.subtitle, section.tag, ...phrase].join(" ").toLowerCase();
+  const extra = [
+    ...(section.terms || []).flat(),
+    ...(section.dialogue || []).flat(),
+    section.tip || ""
+  ];
+  const haystack = [section.title, section.subtitle, section.tag, ...phrase, ...extra].join(" ").toLowerCase();
   return haystack.includes(state.query.toLowerCase().trim());
 }
 
@@ -453,12 +496,19 @@ function speakDialogue(lines) {
 function updateIntro() {
   const title = document.querySelector("#viewTitle");
   const description = document.querySelector("#viewDescription");
-  const copy = {
-    day1: ["第一天 · 金边", "抵达、入住、参观吐斯廉屠杀博物馆，并在夜市采访当地人的生活成本。"],
-    toolkit: ["通用采访工具箱", "从接近陌生人到结束采访，任何一天都可以直接调用。"],
-    all: ["全部样板内容", "同时查看第一天行程与通用采访工具。"]
-  };
-  [title.textContent, description.textContent] = copy[state.view];
+  let copy;
+  if (state.mode === "day") copy = dayCopy[state.day];
+  else if (state.mode === "scene") copy = categoryCopy[state.category];
+  else if (state.mode === "toolkit") copy = ["通用采访工具箱", "接近陌生人、拍摄许可、追问、敏感话题和自然收尾。"];
+  else copy = ["全部内容", "七天行程与通用采访工具的完整内容。"];
+  [title.textContent, description.textContent] = copy;
+}
+
+function sectionMatchesMode(section) {
+  if (state.mode === "day") return section.view === state.day;
+  if (state.mode === "scene") return section.view !== "toolkit" && (state.category === "all" || section.category === state.category);
+  if (state.mode === "toolkit") return section.view === "toolkit";
+  return true;
 }
 
 function render() {
@@ -466,7 +516,7 @@ function render() {
   let visibleCount = 0;
 
   sections
-    .filter(section => state.view === "all" || section.view === state.view)
+    .filter(sectionMatchesMode)
     .forEach(section => {
       const filteredPhrases = section.phrases.filter(phrase => {
         const id = phraseId(section.id, phrase);
@@ -600,8 +650,26 @@ function render() {
 
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    state.view = tab.dataset.view;
+    state.mode = tab.dataset.mode;
     document.querySelectorAll(".tab").forEach(item => item.classList.toggle("is-active", item === tab));
+    dayFilter.hidden = state.mode !== "day";
+    sceneFilter.hidden = state.mode !== "scene";
+    render();
+  });
+});
+
+document.querySelectorAll("[data-day]").forEach(button => {
+  button.addEventListener("click", () => {
+    state.day = button.dataset.day;
+    document.querySelectorAll("[data-day]").forEach(item => item.classList.toggle("is-active", item === button));
+    render();
+  });
+});
+
+document.querySelectorAll("[data-category]").forEach(button => {
+  button.addEventListener("click", () => {
+    state.category = button.dataset.category;
+    document.querySelectorAll("[data-category]").forEach(item => item.classList.toggle("is-active", item === button));
     render();
   });
 });

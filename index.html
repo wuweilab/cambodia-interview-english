@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#173b3f">
+  <meta name="theme-color" content="#f5f5f7">
   <meta name="description" content="中国旅行博主在柬埔寨使用的旅行与采访英语工具">
   <title>柬埔寨旅行采访英语</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="hero">
-    <div class="hero__eyebrow">CAMBODIA FIELD NOTES</div>
+    <div class="hero__eyebrow">Cambodia Field Notes</div>
     <h1>柬埔寨旅行采访英语</h1>
-    <p>按天、按场景快速找到能直接开口的英语。当前为内容样板版。</p>
+    <p>七天行程的旅行办事、街头采访、发音与实战对话。</p>
     <div class="hero__meta">
       <span>7天行程</span><span>旅行办事</span><span>街头采访</span>
     </div>
@@ -27,20 +27,31 @@
       <button id="favoriteToggle" class="soft-button" type="button" aria-pressed="false">☆ 只看收藏</button>
     </section>
 
-    <nav class="tabs" aria-label="内容分类">
-      <button class="tab is-active" type="button" data-view="day1">第一天</button>
-      <button class="tab" type="button" data-view="toolkit">采访工具箱</button>
-      <button class="tab" type="button" data-view="all">全部</button>
+    <nav class="tabs" aria-label="浏览方式">
+      <button class="tab is-active" type="button" data-mode="day">按天</button>
+      <button class="tab" type="button" data-mode="scene">按场景</button>
+      <button class="tab" type="button" data-mode="toolkit">采访工具箱</button>
+      <button class="tab" type="button" data-mode="all">全部</button>
     </nav>
 
-    <section class="day-strip" aria-label="七天行程进度">
-      <div class="day-chip is-ready"><b>D1</b><span>金边</span></div>
-      <div class="day-chip"><b>D2</b><span>金边</span></div>
-      <div class="day-chip"><b>D3</b><span>西港</span></div>
-      <div class="day-chip"><b>D4</b><span>西港</span></div>
-      <div class="day-chip"><b>D5</b><span>暹粒</span></div>
-      <div class="day-chip"><b>D6</b><span>浮村</span></div>
-      <div class="day-chip"><b>D7</b><span>返程</span></div>
+    <section id="dayFilter" class="filter-strip" aria-label="按天筛选">
+      <button class="filter-chip is-active" type="button" data-day="day1"><span>D1</span>金边抵达</button>
+      <button class="filter-chip" type="button" data-day="day2"><span>D2</span>金边采访</button>
+      <button class="filter-chip" type="button" data-day="day3"><span>D3</span>前往西港</button>
+      <button class="filter-chip" type="button" data-day="day4"><span>D4</span>西港深访</button>
+      <button class="filter-chip" type="button" data-day="day5"><span>D5</span>吴哥古迹</button>
+      <button class="filter-chip" type="button" data-day="day6"><span>D6</span>浮村与湖</button>
+      <button class="filter-chip" type="button" data-day="day7"><span>D7</span>返程转机</button>
+    </section>
+
+    <section id="sceneFilter" class="filter-strip" aria-label="按场景筛选" hidden>
+      <button class="filter-chip is-active" type="button" data-category="all">全部场景</button>
+      <button class="filter-chip" type="button" data-category="transport">交通</button>
+      <button class="filter-chip" type="button" data-category="hotel">酒店</button>
+      <button class="filter-chip" type="button" data-category="attraction">景点</button>
+      <button class="filter-chip" type="button" data-category="food">餐饮市场</button>
+      <button class="filter-chip" type="button" data-category="interview">采访</button>
+      <button class="filter-chip" type="button" data-category="safety">安全应急</button>
     </section>
 
     <section class="intro-card">
@@ -90,6 +101,7 @@
   </template>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="all-days.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
